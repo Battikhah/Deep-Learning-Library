@@ -46,7 +46,7 @@ net = NeuaralNets([
     Linear(input_size=50, output_size=4),
 ])
 
-train(net, inputs, targets, num_epochs=5000, optimizer=SGD(learning_rate=0.0001))
+train(net, inputs, targets, num_epochs=5000, optimizer=SGD(learning_rate=0.001))
 
 for x in range(1, 101):
     prediction = net.forward(np.array([binary_encode(x)]))
