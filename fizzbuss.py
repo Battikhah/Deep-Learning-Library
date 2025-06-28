@@ -18,14 +18,6 @@ from net.layers import Linear, Tanh
 from net.optim import SGD
 
 def fizzbuzz_encode(x:int) -> List[int]:
-    """
-    Encode the FizzBuzz problem into a one-hot encoded vector.
-    The encoding is as follows:
-    - 0 for "Fizz"
-    - 1 for "Buzz"
-    - 2 for "FizzBuzz"
-    - 3 for numbers that are neither
-    """
     if x % 15 == 0:
         return [0, 0, 0, 1]  # FizzBuzz
     elif x % 3 == 0:
