@@ -35,7 +35,7 @@ Classic example demonstrating that XOR cannot be solved with a single layer but 
 
 ```python
 from net.train import train
-from net.nn import NeuaralNets
+from net.nn import NeuralNets
 from net.layers import Linear, Tanh
 import numpy as np
 
@@ -110,6 +110,8 @@ predictions = net.forward(test_inputs)
 - **[`Layer`](net/layers.py)**: Base class for all network layers
 - **[`Linear`](net/layers.py)**: Fully connected layer with weights and biases
 - **[`Tanh`](net/layers.py)**: Hyperbolic tangent activation function
+- **[`Relu`](net/layers.py)**: Rectified linear activation function
+- **[`Sigmoid`](net/layers.py)**: Maps input to (0, 1) range.
 - **[`SGD`](net/optim.py)**: Stochastic gradient descent optimizer
 - **[`MSE`](net/loss.py)**: Mean squared error loss function
 

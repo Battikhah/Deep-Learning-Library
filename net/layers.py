@@ -71,7 +71,7 @@ class Linear(Layer):
 
 # Type alias for activation functions
 F = Callable[[Tensor], Tensor]
-class Activiation(Layer):
+class Activation(Layer):
     """
     Base class for activation layers.
     This class defines the interface for activation layers, which includes methods
@@ -111,7 +111,7 @@ def tanh_prime(x: Tensor) -> Tensor:
     """
     return 1 - np.tanh(x) ** 2
 
-class Tanh(Activiation):
+class Tanh(Activation):
     def __init__(self) -> None:
         super().__init__(f=tanh, f_prime=tanh_prime)
 
@@ -122,7 +122,7 @@ def relu(x: Tensor) -> Tensor:
 def relu_prime(x: Tensor) -> Tensor:
     return (x > 0).astype(float)
 
-class Relu(Activiation):
+class Relu(Activation):
     def __init__(self) -> None:
         super().__init__(f=relu, f_prime=relu_prime)
 
@@ -134,6 +134,6 @@ def sigmoid_prime(x: Tensor) -> Tensor:
     sig = sigmoid(x)
     return sig * (1 - sig)
 
-class Sigmoid(Activiation):
+class Sigmoid(Activation):
     def __init__(self) -> None:
         super().__init__(f=sigmoid, f_prime=sigmoid_prime)

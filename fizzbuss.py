@@ -15,7 +15,7 @@ from typing import List
 from net.train import train
 from net.nn import NeuralNets
 from net.layers import Linear, Tanh
-from net.optim import SGD
+from net.optim import SGD, Adam
 
 def fizzbuzz_encode(x:int) -> List[int]:
     if x % 15 == 0:
@@ -48,7 +48,7 @@ net = NeuralNets([
     Linear(input_size=20, output_size=4),
 ])
 
-train(net, inputs, targets, num_epochs=5000, optimizer=SGD(learning_rate=0.001))
+train(net, inputs, targets, num_epochs=5000, optimizer=Adam(learning_rate=0.001))
 
 for x in range(1, 101):
     prediction = net.forward(np.array([binary_encode(x)]))
