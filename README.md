@@ -123,7 +123,7 @@ This repository is actively being developed and will be updated with:
   - LSTM/GRU layers
   - Dropout layers
   - Batch normalization
-  - More activation functions (ReLU, Sigmoid, Softmax)
+  - More activation functions
 
 - **Advanced Optimizers**:
 

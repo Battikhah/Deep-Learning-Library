@@ -69,8 +69,8 @@ class Linear(Layer):
         self.grads["w"] = self.input.T @ grad_output
         return grad_output @ self.params["w"].T
 
+# Type alias for activation functions
 F = Callable[[Tensor], Tensor]
-
 class Activiation(Layer):
     """
     Base class for activation layers.
@@ -98,6 +98,7 @@ class Activiation(Layer):
         """
         return self.f_prime(self.input) * grad_output
 
+# Hyperbolic tangent activation function and its derivative
 def tanh(x: Tensor) -> Tensor:
     """
     Hyperbolic tangent activation function.
@@ -113,3 +114,26 @@ def tanh_prime(x: Tensor) -> Tensor:
 class Tanh(Activiation):
     def __init__(self) -> None:
         super().__init__(f=tanh, f_prime=tanh_prime)
+
+# ReLU activation function and its derivative
+def relu(x: Tensor) -> Tensor:
+    return np.maximum(0, x)
+
+def relu_prime(x: Tensor) -> Tensor:
+    return (x > 0).astype(float)
+
+class Relu(Activiation):
+    def __init__(self) -> None:
+        super().__init__(f=relu, f_prime=relu_prime)
+
+# Sigmoid activation function and its derivative
+def sigmoid(x: Tensor) -> Tensor:
+    return 1 / (1 + np.exp(-x))
+
+def sigmoid_prime(x: Tensor) -> Tensor:
+    sig = sigmoid(x)
+    return sig * (1 - sig)
+
+class Sigmoid(Activiation):
+    def __init__(self) -> None:
+        super().__init__(f=sigmoid, f_prime=sigmoid_prime)
