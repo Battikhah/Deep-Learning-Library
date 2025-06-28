@@ -3,10 +3,10 @@ Optimizer adjusts the parameters of a model based
 on the gradients computed during backpropagation.
 """
 
-from net.nn import NeuaralNets
+from net.nn import NeuralNets
 
 class Optimizer:
-    def step(self, net: NeuaralNets) -> None:
+    def step(self, net: NeuralNets) -> None:
         """
         Update the model parameters based on the gradients.
         This method should be overridden by subclasses.
@@ -17,7 +17,7 @@ class SGD(Optimizer):
     def __init__(self, learning_rate: float = 0.01) -> None:
         self.learning_rate = learning_rate
     
-    def step(self, net: NeuaralNets) -> None:
+    def step(self, net: NeuralNets) -> None:
         # Update the model parameters using Stochastic Gradient Descent.
         for param, grad in net.params_and_grads():
             param-= self.learning_rate * grad

@@ -13,7 +13,7 @@ import numpy as np
 from typing import List
 
 from net.train import train
-from net.nn import NeuaralNets
+from net.nn import NeuralNets
 from net.layers import Linear, Tanh
 from net.optim import SGD
 
@@ -40,10 +40,12 @@ targets = np.array([
     for i in range(101, 1024)
 ])
 
-net = NeuaralNets([
+net = NeuralNets([
     Linear(input_size=10, output_size=50),
     Tanh(),
-    Linear(input_size=50, output_size=4),
+    Linear(input_size=50, output_size=20),
+    Tanh(),
+    Linear(input_size=20, output_size=4),
 ])
 
 train(net, inputs, targets, num_epochs=5000, optimizer=SGD(learning_rate=0.001))

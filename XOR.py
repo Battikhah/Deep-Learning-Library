@@ -4,7 +4,7 @@ but can be solved by a multi-layer perceptron.
 """
 
 from net.train import train
-from net.nn import NeuaralNets
+from net.nn import NeuralNets
 from net.layers import Linear, Tanh
 
 import numpy as np
@@ -36,7 +36,7 @@ for x,y, in zip(XOR_inputs, XOR_targets):
 """
 
 # Create the neural network (Multi-Layer Perceptron)
-net = NeuaralNets([
+net = NeuralNets([
     Linear(input_size=2, output_size=2),
     Tanh(),
     Linear(input_size=2, output_size=2),

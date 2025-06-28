@@ -3,12 +3,12 @@ Function that trains a neural network model.
 """
 
 from net.tensor import Tensor
-from net.nn import NeuaralNets
+from net.nn import NeuralNets
 from net.loss import Loss, MSE
 from net.optim import Optimizer, SGD
 from net.data import DataIterator, BatchIterator
 
-def train(net: NeuaralNets, 
+def train(net: NeuralNets, 
           inputs: Tensor, 
           targets: Tensor, 
           num_epochs: int = 10,

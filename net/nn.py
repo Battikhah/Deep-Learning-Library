@@ -7,7 +7,7 @@ from typing import Sequence, Iterator, Tuple
 from net.tensor import Tensor
 from net.layers import Layer
 
-class NeuaralNets:
+class NeuralNets:
     def __init__(self, layers: Sequence[Layer]) -> None:
         """
         Initialize the neural network with a sequence of layers.
