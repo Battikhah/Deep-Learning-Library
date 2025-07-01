@@ -137,7 +137,7 @@ This repository is actively being developed and will be updated with:
   - ✅ Accuracy calculation
   - ✅ Precision and Recall metrics
   - ✅ F1-Score calculation
-  - Confusion matrix visualization
+  - ✅ Confusion matrix visualization
   - ROC curves and AUC metrics
 
 - **Advanced Features**:
