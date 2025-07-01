@@ -2,6 +2,7 @@
 Optimizer adjusts the parameters of a model based 
 on the gradients computed during backpropagation.
 """
+
 import numpy as np
 from net.nn import NeuralNets
 

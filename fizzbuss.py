@@ -16,6 +16,7 @@ from net.train import train
 from net.nn import NeuralNets
 from net.layers import Linear, Tanh
 from net.optim import SGD, Adam
+from net.acc import check_accuracy, check_precision, check_recall, check_f1_score
 
 def fizzbuzz_encode(x:int) -> List[int]:
     if x % 15 == 0:
@@ -56,4 +57,11 @@ for x in range(1, 101):
     print(f"Input: {x}, "
           f"Predicted: {['Fizz', 'Buzz', 'FizzBuzz', 'Neither'][fizzbuzz_output]}, "
           f"Actual: {['Fizz', 'Buzz', 'FizzBuzz', 'Neither'][actual_output]}")
+
+print("Checking model performance...")
+print("Accuracy:", check_accuracy(net, inputs, targets))
+print("Precision:", check_precision(net, inputs, targets))
+print("Recall:", check_recall(net, inputs, targets))
+print("F1 Score:", check_f1_score(net, inputs, targets))
+print("Training complete.")
 
