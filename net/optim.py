@@ -35,14 +35,18 @@ class Adam(Optimizer):
     def step(self, net: NeuralNets) -> None:
         self.t += 1
         for param, grad in net.params_and_grads():
-            if id(param) not in self.m:
-                self.m[id(param)] = grad.copy()
-                self.v[id(param)] = grad.copy()
-            else:
-                self.m[id(param)] = self.beta1 * self.m[id(param)] + (1 - self.beta1) * grad
-                self.v[id(param)] = self.beta2 * self.v[id(param)] + (1 - self.beta2) * (grad ** 2)
+            param_id = id(param)
+            # Ensure grad is a numpy array for copy and math operations
+            import numpy as np
+            grad = np.array(grad)
+            if param_id not in self.m:
+                self.m[param_id] = np.zeros_like(grad)
+                self.v[param_id] = np.zeros_like(grad)
+            self.m[param_id] = self.beta1 * self.m[param_id] + (1 - self.beta1) * grad
+            self.v[param_id] = self.beta2 * self.v[param_id] + (1 - self.beta2) * (grad ** 2)
             
-            m_hat = self.m[id(param)] / (1 - self.beta1 ** self.t)
-            v_hat = self.v[id(param)] / (1 - self.beta2 ** self.t)
+            m_hat = self.m[param_id] / (1 - self.beta1 ** self.t)
+            v_hat = self.v[param_id] / (1 - self.beta2 ** self.t)
             
-            param -= self.learning_rate * m_hat / (v_hat ** 0.5 + self.epsilon)
+            update = self.learning_rate * m_hat / (np.sqrt(v_hat) + self.epsilon)
+            param -= update  # This works if param is a numpy array; otherwise, update net's parameter directly

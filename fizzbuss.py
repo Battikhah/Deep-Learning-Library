@@ -41,11 +41,9 @@ targets = np.array([
 ])
 
 net = NeuralNets([
-    Linear(input_size=10, output_size=50),
+    Linear(input_size=10, output_size=20),
     Tanh(),
-    Linear(input_size=50, output_size=20),
-    Tanh(),
-    Linear(input_size=20, output_size=4),
+    Linear(input_size=20, output_size=4)
 ])
 
 train(net, inputs, targets, num_epochs=5000, optimizer=Adam(learning_rate=0.001))
