@@ -2,7 +2,7 @@
 Optimizer adjusts the parameters of a model based 
 on the gradients computed during backpropagation.
 """
-
+import numpy as np
 from net.nn import NeuralNets
 
 class Optimizer:
@@ -37,7 +37,6 @@ class Adam(Optimizer):
         for param, grad in net.params_and_grads():
             param_id = id(param)
             # Ensure grad is a numpy array for copy and math operations
-            import numpy as np
             grad = np.array(grad)
             if param_id not in self.m:
                 self.m[param_id] = np.zeros_like(grad)
@@ -49,4 +48,4 @@ class Adam(Optimizer):
             v_hat = self.v[param_id] / (1 - self.beta2 ** self.t)
             
             update = self.learning_rate * m_hat / (np.sqrt(v_hat) + self.epsilon)
-            param -= update  # This works if param is a numpy array; otherwise, update net's parameter directly
+            param -= update
