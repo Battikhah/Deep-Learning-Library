@@ -7,7 +7,7 @@ A minimal deep learning library built from scratch in Python using NumPy. This l
 - **Neural Network Architecture**: Modular design with customizable layers
 - **Layer Types**:
   - Linear (fully connected) layers
-  - Activation layers (Tanh, with more coming soon)
+  - Activation layers (Tanh, Relu, Sigmoid)
 - **Loss Functions**: Mean Squared Error (MSE)
 - **Optimizers**: Stochastic Gradient Descent (SGD)
 - **Data Handling**: Batch processing with shuffling support
