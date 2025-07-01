@@ -16,7 +16,7 @@ from net.train import train
 from net.nn import NeuralNets
 from net.layers import Linear, Tanh
 from net.optim import SGD, Adam
-from net.acc import check_accuracy, check_precision, check_recall, check_f1_score
+from net.eval import check_accuracy, check_precision, check_recall, check_f1_score
 
 def fizzbuzz_encode(x:int) -> List[int]:
     if x % 15 == 0:
