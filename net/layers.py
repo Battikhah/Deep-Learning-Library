@@ -69,6 +69,28 @@ class Linear(Layer):
         self.grads["w"] = self.input.T @ grad_output
         return grad_output @ self.params["w"].T
 
+class Dropout(Layer):
+    """
+    Dropout Layer.
+    This layer randomly sets a fraction of the input units to zero during training,
+    which helps prevent overfitting.
+    """
+    def __init__(self, dropout_rate: float = 0.3) -> None:
+        super().__init__()
+        self.dropout_rate = dropout_rate
+        self.mask = None
+        self.training = True  
+    def forward(self, input: Tensor) -> Tensor:
+        if self.training:
+            self.mask = np.random.binomial(1, 1 - self.dropout_rate, size=input.shape)
+            return input * self.mask / (1 - self.dropout_rate)  
+        return input  
+    
+    def backward(self, grad_output: Tensor) -> Tensor:
+        if self.training:
+            return grad_output * self.mask / (1 - self.dropout_rate)
+        return grad_output 
+
 # Type alias for activation functions
 F = Callable[[Tensor], Tensor]
 class Activation(Layer):
