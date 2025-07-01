@@ -25,6 +25,7 @@ net/
 ├── optim.py         # Optimizers
 ├── data.py          # Data iterators and batch processing
 └── train.py         # Training loop implementation
+└── eval.py          # Evulation methods
 ```
 
 ## Examples
