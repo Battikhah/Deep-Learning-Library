@@ -16,7 +16,7 @@ from net.train import train
 from net.nn import NeuralNets
 from net.layers import Linear, Tanh
 from net.optim import SGD, Adam
-from net.eval import check_accuracy, check_precision, check_recall, check_f1_score
+from net.eval import check_accuracy, check_precision, check_recall, check_f1_score, confusion_matrix_seaborn
 
 def fizzbuzz_encode(x:int) -> List[int]:
     if x % 15 == 0:
@@ -63,5 +63,6 @@ print("Accuracy:", check_accuracy(net, inputs, targets))
 print("Precision:", check_precision(net, inputs, targets))
 print("Recall:", check_recall(net, inputs, targets))
 print("F1 Score:", check_f1_score(net, inputs, targets))
+confusion_matrix_seaborn(net, inputs, targets)
 print("Training complete.")
 

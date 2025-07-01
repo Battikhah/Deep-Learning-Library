@@ -129,3 +129,43 @@ def check_f1_score(net: NeuralNets, inputs: Tensor, targets: Tensor) -> float:
         return 2 * (precision * recall) / (precision + recall)
     else:
         return 0.0
+    
+def confusion_matrix(net: NeuralNets, inputs: Tensor, targets: Tensor) -> np.ndarray:
+    """
+    Generate a confusion matrix for the model's predictions.
+    
+    Args:
+        net: The neural network model
+        inputs: Input data
+        targets: True target labels (one-hot encoded)
+    
+    Returns:
+        Confusion matrix as a 2D numpy array
+    """
+    predictions = net.forward(inputs)
+    
+    # Convert predictions and targets to class indices
+    predicted_classes = np.argmax(predictions, axis=1)
+    true_classes = np.argmax(targets, axis=1)
+    # Get unique classes
+    classes = np.unique(true_classes)
+    num_classes = len(classes)
+    cm = np.zeros((num_classes, num_classes), dtype=int)
+    for i in range(len(true_classes)):
+        cm[true_classes[i], predicted_classes[i]] += 1
+    return cm
+
+def confusion_matrix_seaborn(net: NeuralNets, inputs: Tensor, targets: Tensor) -> None:
+    """
+    Generate a confusion matrix and display it using seaborn.
+    """
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    cm = confusion_matrix(net, inputs, targets)
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+                    xticklabels=np.unique(np.argmax(targets, axis=1)),
+                    yticklabels=np.unique(np.argmax(targets, axis=1)))
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.title('Confusion Matrix')
+    plt.show()
