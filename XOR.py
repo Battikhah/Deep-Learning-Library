@@ -25,7 +25,7 @@ XOR_targets = np.array([
 
 """"
 # Create the neural network (Single Linear Layer)
-net = NeuaralNets([
+net = NeuralNets([
     Linear(input_size=2, output_size=2),
 ])
 train(net, XOR_inputs, XOR_targets, num_epochs=5000)

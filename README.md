@@ -45,7 +45,7 @@ inputs = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
 targets = np.array([[1, 0], [0, 1], [0, 1], [1, 0]])
 
 # Multi-layer perceptron
-net = NeuaralNets([
+net = NeuralNets([
     Linear(input_size=2, output_size=2),
     Tanh(),
     Linear(input_size=2, output_size=2),
@@ -60,11 +60,11 @@ A creative approach to solving FizzBuzz using neural networks:
 
 ```python
 from net.train import train
-from net.nn import NeuaralNets
+from net.nn import NeuralNets
 from net.layers import Linear, Tanh
 from net.optim import SGD
 
-net = NeuaralNets([
+net = NeuralNets([
     Linear(input_size=10, output_size=50),
     Tanh(),
     Linear(input_size=50, output_size=4),
@@ -78,10 +78,10 @@ train(net, inputs, targets, num_epochs=5000, optimizer=SGD(learning_rate=0.001))
 1. **Define your network architecture**:
 
 ```python
-from net.nn import NeuaralNets
+from net.nn import NeuralNets
 from net.layers import Linear, Tanh
 
-net = NeuaralNets([
+net = NeuralNets([
     Linear(input_size=10, output_size=20),
     Tanh(),
     Linear(input_size=20, output_size=1),
@@ -107,7 +107,7 @@ predictions = net.forward(test_inputs)
 
 ## Core Components
 
-- **[`NeuaralNets`](net/nn.py)**: Container for layers that handles forward/backward propagation
+- **[`NeuralNets`](net/nn.py)**: Container for layers that handles forward/backward propagation
 - **[`Layer`](net/layers.py)**: Base class for all network layers
 - **[`Linear`](net/layers.py)**: Fully connected layer with weights and biases
 - **[`Tanh`](net/layers.py)**: Hyperbolic tangent activation function
