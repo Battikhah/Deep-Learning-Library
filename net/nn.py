@@ -6,6 +6,7 @@ backward propagation through the network.
 from typing import Sequence, Iterator, Tuple
 from net.tensor import Tensor
 from net.layers import Layer
+import pickle
 
 class NeuralNets:
     def __init__(self, layers: Sequence[Layer]) -> None:
@@ -43,3 +44,17 @@ class NeuralNets:
         for layer in self.layers:
             for param_name, param in layer.params.items():
                 yield param, layer.grads[param_name]
+
+    def save(self, fp: str) -> None:
+        """
+        Save the neural network to a file.
+        """
+        with open(fp, 'wb') as f:
+            pickle.dump(self, f)
+
+    def load(self, fp: str) -> 'NeuralNets':
+        """
+        Load a neural network from a file.
+        """
+        with open(fp, 'rb') as f:
+            return pickle.load(f)
