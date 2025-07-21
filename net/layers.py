@@ -38,10 +38,16 @@ class Linear(Layer):
     This layer applies a linear transformation to the input.
     """
 
-    def __init__(self, input_size: int, output_size: int) -> None:
+    def __init__(self, input_size: int, output_size: int, init_type="xavier") -> None:
         super().__init__()
         # Initialize weights and biases
-        self.params["w"] = np.random.randn(input_size, output_size)
+        if init_type == "xavier":
+            self.params["w"] = np.random.randn(input_size, output_size) * np.sqrt(2. / (input_size + output_size))
+        elif init_type == "he":
+            self.params["w"] = np.random.randn(input_size, output_size) * np.sqrt(2. / input_size)
+        else:
+            self.params["w"] = np.random.randn(input_size, output_size) * 0.01 
+
         self.params["b"] = np.random.randn(output_size)
 
     def forward(self, input: Tensor) -> Tensor:
