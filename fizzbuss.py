@@ -42,9 +42,11 @@ targets = np.array([
 ])
 
 net = NeuralNets([
-    Linear(input_size=10, output_size=50),
+    Linear(input_size=10, output_size=64, init_type="xavier"),
     Tanh(),
-    Linear(input_size=50, output_size=4)
+    Linear(input_size=64, output_size=32, init_type="xavier"),
+    Tanh(),
+    Linear(input_size=32, output_size=4, init_type="xavier")
 ])
 
 train(net, inputs, targets, num_epochs=5000, optimizer=Adam(learning_rate=0.001))
