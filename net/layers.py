@@ -165,3 +165,16 @@ def sigmoid_prime(x: Tensor) -> Tensor:
 class Sigmoid(Activation):
     def __init__(self) -> None:
         super().__init__(f=sigmoid, f_prime=sigmoid_prime)
+
+# Softmax activation function and its derivative
+def softmax(x: Tensor) -> Tensor:
+    e_x = np.exp(x - np.max(x, axis=-1, keepdims=True))
+    return e_x / np.sum(e_x, axis=-1, keepdims=True)
+
+def softmax_prime(x: Tensor) -> Tensor:
+    s = softmax(x)
+    return s * (1 - s)
+
+class Softmax(Activation):
+    def __init__(self) -> None:
+        super().__init__(f=softmax, f_prime=softmax_prime)
