@@ -15,16 +15,25 @@ class Optimizer:
         raise NotImplementedError("Subclasses should implement this method.")
     
 class SGD(Optimizer):
-    def __init__(self, learning_rate: float = 0.01) -> None:
+    def __init__(self, learning_rate: float = 0.01, learning_decay: float = 0.0) -> None:
         self.learning_rate = learning_rate
-    
+        self.learning_decay = learning_decay
+        self.initial_learning_rate = learning_rate
+        self.iteration = 0
+
     def step(self, net: NeuralNets) -> None:
         # Update the model parameters using Stochastic Gradient Descent.
+        if self.learning_decay > 0:
+            self.iteration += 1
+            self.learning_rate = self.initial_learning_rate / (1 + self.learning_decay * self.iteration)
+        
+        # Ensure that the gradients are numpy arrays for consistency
         for param, grad in net.params_and_grads():
-            param-= self.learning_rate * grad
+            param -= self.learning_rate * grad
+
 
 class Adam(Optimizer):
-    def __init__(self, learning_rate: float = 0.001, beta1: float = 0.9, beta2: float = 0.999, epsilon: float = 1e-8) -> None:
+    def __init__(self, learning_rate: float = 0.001, beta1: float = 0.9, beta2: float = 0.999, epsilon: float = 1e-8, learning_decay: float = 0.0) -> None:
         self.learning_rate = learning_rate
         self.beta1 = beta1
         self.beta2 = beta2
@@ -32,9 +41,14 @@ class Adam(Optimizer):
         self.m = {}
         self.v = {}
         self.t = 0
+        self.learning_decay = learning_decay
+        self.initial_learning_rate = learning_rate
+
     
     def step(self, net: NeuralNets) -> None:
         self.t += 1
+        if self.learning_decay > 0:
+            self.learning_rate = self.initial_learning_rate / (1 + self.learning_decay * self.t)
         for param, grad in net.params_and_grads():
             param_id = id(param)
             # Ensure grad is a numpy array for copy and math operations
