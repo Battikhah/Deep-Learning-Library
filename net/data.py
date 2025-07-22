@@ -1,7 +1,7 @@
 """
 Feeds inputs into our network via batches
 """
-
+import pandas as pd
 from net.tensor import Tensor
 import numpy as np
 from typing import Iterator, NamedTuple
@@ -32,3 +32,39 @@ class BatchIterator(DataIterator):
             batch_inputs = inputs[start:end]
             batch_targets = targets[start:end]
             yield Batch(batch_inputs, batch_targets)
+
+def label_encode(labels: np.ndarray) -> tuple:
+    """
+    Convert categorical labels to integer encoding.
+    
+    Args:
+        labels: Array of categorical values
+    
+    Returns:
+        tuple: (encoded_values, unique_labels)
+    """
+    unique_labels = np.unique(labels)
+    label_to_index = {label: index for index, label in enumerate(unique_labels)}
+    encoded = np.array([label_to_index[label] for label in labels], dtype=np.int32)
+    
+    return encoded, unique_labels
+
+def standard_scaler(data: np.ndarray) -> tuple:
+    """
+    Standardize features by removing the mean and scaling to unit variance.
+    
+    Args:
+        data: Feature matrix
+    
+    Returns:
+        tuple: (scaled_data, means, stds)
+    """
+    means = np.mean(data, axis=0)
+    stds = np.std(data, axis=0)
+    
+    # Avoid division by zero
+    stds = np.where(stds == 0, 1.0, stds)
+    
+    scaled_data = (data - means) / stds
+    
+    return scaled_data, means, stds

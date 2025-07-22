@@ -14,42 +14,8 @@ from net.optim import Adam, SGD
 from net.eval import check_accuracy, check_precision, check_recall, check_f1_score, confusion_matrix_seaborn
 from net.train_test import train_test_split
 from net.loss import MSE
+from net.data import label_encode, standard_scaler
 import matplotlib.pyplot as plt
-
-
-def label_encode(column):
-    """
-    Simple label encoder implementation using NumPy.
-    
-    Args:
-        column: Array-like column to encode
-    
-    Returns:
-        tuple: (encoded_values, unique_labels)
-    """
-    unique_values = np.unique(column)
-    mapping = {val: idx for idx, val in enumerate(unique_values)}
-    encoded = np.array([mapping[val] for val in column])
-    return encoded, unique_values
-
-
-def standard_scaler(X):
-    """
-    Standard scaler implementation using NumPy.
-    Standardizes features by removing the mean and scaling to unit variance.
-    
-    Args:
-        X: Feature matrix
-    
-    Returns:
-        tuple: (scaled_X, mean, std)
-    """
-    mean = np.mean(X, axis=0)
-    std = np.std(X, axis=0)
-    # Avoid division by zero
-    std = np.where(std == 0, 1, std)
-    scaled_X = (X - mean) / std
-    return scaled_X, mean, std
 
 
 def load_and_preprocess_data():
@@ -71,9 +37,9 @@ def load_and_preprocess_data():
     print(df['charges'].describe())
     
     # Encode categorical variables manually
-    df['sex_encoded'], sex_labels = label_encode(df['sex'].values)
-    df['smoker_encoded'], smoker_labels = label_encode(df['smoker'].values)
-    df['region_encoded'], region_labels = label_encode(df['region'].values)
+    df['sex_encoded'], sex_labels = label_encode(np.array(df['sex'].values))
+    df['smoker_encoded'], smoker_labels = label_encode(np.array(df['smoker'].values))
+    df['region_encoded'], region_labels = label_encode(np.array(df['region'].values))
     
     print(f"\nEncoding mappings:")
     print(f"Sex: {dict(zip(sex_labels, range(len(sex_labels))))}")

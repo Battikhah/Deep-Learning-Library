@@ -39,3 +39,23 @@ class MSE(Loss):
         Calculate the gradient of the Mean Squared Error loss.
         """
         return 2 * (y_predictions - y_true) / y_predictions.size
+    
+class CrossEntropyLoss(Loss):
+    """
+    Cross-Entropy loss function.
+    This class implements the cross-entropy loss and its gradient.
+    """
+
+    def loss(self, y_predictions: Tensor, y_true: Tensor) -> float:
+        """
+        Calculate the Cross-Entropy loss.
+        """
+        # Ensure predictions are in the range (0, 1)
+        y_predictions = np.clip(y_predictions, 1e-15, 1 - 1e-15)
+        return float(-np.mean(y_true * np.log(y_predictions) + (1 - y_true) * np.log(1 - y_predictions)))
+
+    def grad(self, y_predictions: Tensor, y_true: Tensor) -> Tensor:
+        """
+        Calculate the gradient of the Cross-Entropy loss.
+        """
+        return (y_predictions - y_true) / (y_predictions * (1 - y_predictions))

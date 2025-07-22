@@ -64,3 +64,4 @@ class Adam(Optimizer):
             
             update = self.learning_rate * m_hat / (np.sqrt(v_hat) + self.epsilon)
             param -= update
+
