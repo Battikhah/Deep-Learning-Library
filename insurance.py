@@ -13,9 +13,7 @@ from net.train import train
 from net.optim import Adam, SGD
 from net.eval import check_accuracy, check_precision, check_recall, check_f1_score, confusion_matrix_seaborn
 from net.train_test import train_test_split
-from net.loss import MSE
 from net.data import label_encode, standard_scaler
-import matplotlib.pyplot as plt
 
 
 def load_and_preprocess_data():

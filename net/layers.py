@@ -97,6 +97,213 @@ class Dropout(Layer):
             return grad_output * self.mask / (1 - self.dropout_rate)
         return grad_output 
 
+class RNN(Layer):
+    def __init__(self, input_size: int, hidden_size: int, activation: str = "tanh"):
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+        self.activation = activation
+        
+        # Initialize weights
+        self.params = {
+            "W_xh": np.random.randn(input_size, hidden_size) * 0.01,
+            "W_hh": np.random.randn(hidden_size, hidden_size) * 0.01,
+            "b_h": np.zeros((1, hidden_size))
+        }
+        
+        self.grads = {key: np.zeros_like(val) for key, val in self.params.items()}
+        
+        # Store states for backpropagation
+        self.hidden_states = []
+        self.inputs = []
+        
+    def forward(self, input: Tensor) -> Tensor:
+        """
+        Forward pass for RNN
+        inputs shape: (sequence_length, batch_size, input_size)
+        """
+        seq_len, batch_size, _ = input.shape
+        
+        # Initialize hidden state
+        h = np.zeros((batch_size, self.hidden_size))
+        outputs = []
+        
+        self.hidden_states = [h]
+        self.inputs = []
+        
+        for t in range(seq_len):
+            x_t = input[t]  # (batch_size, input_size)
+            self.inputs.append(x_t)
+            
+            # h_t = tanh(W_xh * x_t + W_hh * h_{t-1} + b_h)
+            h = np.tanh(
+                np.dot(x_t, self.params["W_xh"]) + 
+                np.dot(h, self.params["W_hh"]) + 
+                self.params["b_h"]
+            )
+            
+            self.hidden_states.append(h)
+            outputs.append(h)
+        
+        return np.array(outputs)  # (seq_len, batch_size, hidden_size)
+    
+    def backward(self, grad_output: Tensor) -> Tensor:
+        """
+        Backward pass for RNN using Backpropagation Through Time (BPTT)
+        """
+        seq_len, batch_size, _ = grad_output.shape
+        
+        # Initialize gradients
+        self.grads = {key: np.zeros_like(val) for key, val in self.params.items()}
+        input_grads = np.zeros((seq_len, batch_size, self.input_size))
+        
+        # Initialize gradient flowing back through hidden states
+        dh_next = np.zeros((batch_size, self.hidden_size))
+        
+        # Backpropagate through time
+        for t in reversed(range(seq_len)):
+            # Current gradients
+            dh = grad_output[t] + dh_next
+            
+            # Gradient through tanh activation
+            h_t = self.hidden_states[t + 1]
+            dtanh = dh * (1 - h_t * h_t)  # derivative of tanh
+            
+            # Gradients for weights and biases
+            self.grads["W_xh"] += np.dot(self.inputs[t].T, dtanh)
+            self.grads["W_hh"] += np.dot(self.hidden_states[t].T, dtanh)
+            self.grads["b_h"] += np.sum(dtanh, axis=0, keepdims=True)
+            
+            # Gradients for inputs and previous hidden state
+            input_grads[t] = np.dot(dtanh, self.params["W_xh"].T)
+            dh_next = np.dot(dtanh, self.params["W_hh"].T)
+        
+        return input_grads
+
+class LSTM(Layer):
+    def __init__(self, input_size: int, hidden_size: int):
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+        
+        # Initialize all gates' weights
+        concat_size = input_size + hidden_size
+        
+        self.params = {
+            # Forget gate
+            "W_f": np.random.randn(concat_size, hidden_size) * 0.01,
+            "b_f": np.zeros((1, hidden_size)),
+            
+            # Input gate
+            "W_i": np.random.randn(concat_size, hidden_size) * 0.01,
+            "b_i": np.zeros((1, hidden_size)),
+            
+            # Candidate values
+            "W_C": np.random.randn(concat_size, hidden_size) * 0.01,
+            "b_C": np.zeros((1, hidden_size)),
+            
+            # Output gate
+            "W_o": np.random.randn(concat_size, hidden_size) * 0.01,
+            "b_o": np.zeros((1, hidden_size))
+        }
+        
+        self.grads = {key: np.zeros_like(val) for key, val in self.params.items()}
+    
+    def sigmoid(self, x):
+        return 1 / (1 + np.exp(-np.clip(x, -500, 500)))
+
+    def forward(self, input: Tensor) -> Tensor:
+        seq_len, batch_size, _ = input.shape
+
+        # Initialize states
+        h = np.zeros((batch_size, self.hidden_size))
+        C = np.zeros((batch_size, self.hidden_size))
+        
+        outputs = []
+        self.cache = []
+        
+        for t in range(seq_len):
+            x_t = input[t]
+
+            # Concatenate input and previous hidden state
+            concat = np.column_stack([h, x_t])
+            
+            # Gates
+            f_t = self.sigmoid(np.dot(concat, self.params["W_f"]) + self.params["b_f"])
+            i_t = self.sigmoid(np.dot(concat, self.params["W_i"]) + self.params["b_i"])
+            C_tilde = np.tanh(np.dot(concat, self.params["W_C"]) + self.params["b_C"])
+            o_t = self.sigmoid(np.dot(concat, self.params["W_o"]) + self.params["b_o"])
+            
+            # Update cell state and hidden state
+            C = f_t * C + i_t * C_tilde
+            h = o_t * np.tanh(C)
+            
+            outputs.append(h)
+            
+            # Cache for backward pass
+            self.cache.append({
+                'h_prev': self.cache[-1]['h'] if self.cache else np.zeros_like(h),
+                'C_prev': self.cache[-1]['C'] if self.cache else np.zeros_like(C),
+                'h': h, 'C': C, 'f_t': f_t, 'i_t': i_t, 
+                'C_tilde': C_tilde, 'o_t': o_t, 'concat': concat
+            })
+        
+        return np.array(outputs)
+    
+    def backward(self, grad_output: Tensor) -> Tensor:
+        seq_len, batch_size, _ = grad_output.shape
+        input_grads = np.zeros((seq_len, batch_size, self.input_size))
+        dh_next = np.zeros((batch_size, self.hidden_size))
+        dC_next = np.zeros((batch_size, self.hidden_size))
+        self.grads = {key: np.zeros_like(val) for key, val in self.params.items()}
+        for t in reversed(range(seq_len)):
+            # Current gradients
+            h = self.cache[t]['h']
+            C = self.cache[t]['C']
+            f_t = self.cache[t]['f_t']
+            i_t = self.cache[t]['i_t']
+            C_tilde = self.cache[t]['C_tilde']
+            o_t = self.cache[t]['o_t']
+            concat = self.cache[t]['concat']
+            
+            dh = grad_output[t] + dh_next
+            dC = dC_next + dh * o_t * (1 - np.tanh(C) ** 2)
+            
+            # Gradients for gates
+            do_t = dh * np.tanh(C)
+            dC_prev = dC * f_t
+            df_t = dC * C * f_t * (1 - f_t)
+            di_t = dC * C_tilde * i_t * (1 - i_t)
+            dC_tilde = dC * i_t * (1 - C_tilde ** 2)
+            
+            # Gradients for weights and biases
+            self.grads["W_f"] += np.dot(concat.T, df_t)
+            self.grads["b_f"] += np.sum(df_t, axis=0, keepdims=True)
+            
+            self.grads["W_i"] += np.dot(concat.T, di_t)
+            self.grads["b_i"] += np.sum(di_t, axis=0, keepdims=True)
+            
+            self.grads["W_C"] += np.dot(concat.T, dC_tilde)
+            self.grads["b_C"] += np.sum(dC_tilde, axis=0, keepdims=True)
+            
+            self.grads["W_o"] += np.dot(concat.T, do_t)
+            self.grads["b_o"] += np.sum(do_t, axis=0, keepdims=True)
+            
+            # Gradients for inputs and previous hidden state
+            input_grads[t] = (
+                df_t @ self.params["W_f"].T +
+                di_t @ self.params["W_i"].T +
+                dC_tilde @ self.params["W_C"].T +
+                do_t @ self.params["W_o"].T
+            )[:, :self.input_size]
+            
+            dh_next = (
+                df_t @ self.params["W_f"].T +
+                di_t @ self.params["W_i"].T +
+                dC_tilde @ self.params["W_C"].T +
+                do_t @ self.params["W_o"].T
+            )[:, self.input_size:]
+            dC_next = dC * f_t
+        return input_grads
+
 # Type alias for activation functions
 F = Callable[[Tensor], Tensor]
 class Activation(Layer):
